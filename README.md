@@ -1,5 +1,9 @@
 # WP Sync DB
 
+> [!NOTE]
+> This fork is lightly maintained, but I'm not actively developing it.
+> No new features are planned, but I'll fix deprecated code and exception from time to time.
+
 WP Sync DB eliminates the manual work of migrating a WP database. Copy your db from one WP install to another with a single-click in your dashboard. Especially handy for syncing a local development database with a live site.
 
 <p align="center"><img src="https://raw.github.com/slang800/psychic-ninja/master/wp-migrate-db.png"/></p>
@@ -85,7 +89,7 @@ A short demo of how the [Media Files addon](https://github.com/wp-sync-db/wp-syn
 
 ## Similar Tools
 
-- [Interconnect IT's Search & Replace](https://github.com/interconnectit/Search-Replace-DB)
+-   [Interconnect IT's Search & Replace](https://github.com/interconnectit/Search-Replace-DB)
 
 ## Isn't this the same as WP Migrate DB Pro?
 
