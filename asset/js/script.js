@@ -883,6 +883,7 @@ var execute_next_step;
           last_element = value;
         });
 
+        // Hide small tables, add their rows to the last table
         $('.progress-chunk').each(function(index) {
           if ($(this).width() < 1 && tables_to_migrate[index] !=
             last_element) {
@@ -921,11 +922,6 @@ var execute_next_step;
 
       }
 
-      table_details = decide_tables_to_display_rows(tables_to_migrate,
-        table_rows);
-      table_rows = table_details[0];
-      total_size = table_details[1];
-
       $('.progress-title').after('<img src="' + spinner_url +
         '" alt="" class="migration-progress-ajax-spinner general-spinner" />'
       );
@@ -934,6 +930,11 @@ var execute_next_step;
       $('.progress-content').css('top', '-' + height + 'px').show().animate({
         'top': '0px'
       });
+
+      table_details = decide_tables_to_display_rows(tables_to_migrate,
+        table_rows);
+      table_rows = table_details[0];
+      total_size = table_details[1];
 
       setup_counter();
       currently_migrating = true;
