@@ -1,11 +1,16 @@
 {
-  "name": "wp-sync-db/wp-sync-db",
-  "type": "wordpress-plugin",
-  "homepage": "https://github.com/wp-sync-db/wp-sync-db",
-  "license": "GPL-2.0",
-  "description": "WP Sync DB eliminates the manual work of migrating a WP database.",
-  "keywords": ["plugin","wordpress","wp-sync-db","db"],
-  "scripts": {
-    "test": "./test.sh"
-  }
+	"name": "jsongerber/wp-sync-db",
+	"type": "wordpress-plugin",
+	"homepage": "https://github.com/wp-sync-db/wp-sync-db",
+	"license": "GPL-2.0",
+	"description": "WP Sync DB eliminates the manual work of migrating a WP database.",
+	"keywords": [
+		"plugin",
+		"wordpress",
+		"wp-sync-db",
+		"db"
+	],
+	"scripts": {
+		"test": "./test.sh"
+	}
 }
