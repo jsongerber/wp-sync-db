@@ -48,7 +48,7 @@ WP Sync DB checks both the remote and local servers to determine limitations and
 
 ### Sync Media Libraries Between Installations
 
-Using the optional [WP Sync DB Media Files](https://github.com/wp-sync-db/wp-sync-db-media-files) addon, you can have media files synced between installs too.
+Using the optional [WP Sync DB Media Files](https://github.com/jsongerber/wp-sync-db-media-files) addon, you can have media files synced between installs too.
 
 ## Installation
 
@@ -91,7 +91,7 @@ This screencast demonstrates how you can push a local WordPress database you've 
 
 <http://www.youtube.com/watch?v=0aR8-jC2XXM>
 
-A short demo of how the [Media Files addon](https://github.com/wp-sync-db/wp-sync-db-media-files) allows you to sync up your WordPress Media Libraries.
+A short demo of how the [Media Files addon](https://github.com/jsongerber/wp-sync-db-media-files) allows you to sync up your WordPress Media Libraries.
 
 ## Similar Tools
 
