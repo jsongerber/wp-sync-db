@@ -1415,7 +1415,7 @@ class WPSDB extends WPSDB_Base
 
       <?php
       $hide_warning = apply_filters('wpsdb_hide_set_time_limit_warning', false);
-      if (false == $this->set_time_limit_available() && !$hide_warning && !$safe_mode) {
+      if (false == $this->set_time_limit_available() && !$hide_warning && (!function_exists('ini_get') || !ini_get('safe_mode'))) {
       ?>
         <div class="updated warning inline-message">
           <?php
