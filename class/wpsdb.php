@@ -1264,7 +1264,7 @@ class WPSDB extends WPSDB_Base
     global $wpdb;
     $results = $wpdb->get_results(
       $wpdb->prepare(
-        'SELECT table_name, TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = %s',
+        'SELECT TABLE_NAME, TABLE_ROWS FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = %s',
         DB_NAME
       ),
       ARRAY_A
