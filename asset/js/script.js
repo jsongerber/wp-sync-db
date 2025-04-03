@@ -1640,14 +1640,13 @@ var execute_next_step;
       $('.no-replaces-message').hide();
     });
 
-    $('body').delegate('#find-and-replace-sort tbody tr.replace-row',
-      'hover', function(event) {
-        if (event.type === 'mouseenter') {
-          $('.replace-remove-row', this).show();
-        } else {
-          $('.replace-remove-row', this).hide();
-        }
-      });
+    $('body').delegate('#find-and-replace-sort tbody tr.replace-row', 'mouseenter', function () {
+			$('.replace-remove-row', this).show();
+		});
+		$('body').delegate('#find-and-replace-sort tbody tr.replace-row', 'mouseleave', function () {
+			$('.replace-remove-row', this).hide();
+		});
+
 
     $('#find-and-replace-sort tbody').sortable({
       items: '> tr:not(.pin)',
