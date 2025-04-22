@@ -3,7 +3,7 @@
 Plugin Name: WP Sync DB
 Description: Export, push, and pull to migrate your WordPress databases.
 Author: Jason Gerber
-Version: 1.6.5
+Version: 1.6.6
 Author URI: http://slang.cx
 GitHub Plugin URI: jsongerber/wp-sync-db
 Network: True
