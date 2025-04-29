@@ -12,6 +12,8 @@ Network: True
 $GLOBALS['wpsdb_meta']['wp-sync-db']['version'] = '1.5';
 $GLOBALS['wpsdb_meta']['wp-sync-db']['folder'] = basename(plugin_dir_path(__FILE__));
 
+define( 'WPSDB_ROOT', plugin_dir_url(__FILE__) );
+
 // Define the directory seperator if it isn't already
 if (!defined('DS')) {
   if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
@@ -45,3 +47,7 @@ function wp_sync_db_init()
 }
 
 add_action('init', 'wp_sync_db_init');
+
+// module
+require_once 'module-cli/_load.php';
+require_once 'module-media-files/_load.php';
