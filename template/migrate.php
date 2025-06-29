@@ -123,10 +123,6 @@ $loaded_profile = wp_parse_args($loaded_profile, $this->checkbox_options);
 
     <p class="connection-status"><?php _e('Please enter the connection information above to continue.', 'wp-sync-db'); ?></p>
 
-    <div class="notification-message error-notice different-plugin-version-notice inline-message" style="display: none;">
-      <b><?php _e('Version Mismatch', 'wp-sync-db'); ?></b> &mdash; <?php printf(__('We\'ve detected you have version <span class="remote-version"></span> of WP Sync DB at <span class="remote-location"></span> but are using %1$s here. Please go to the <a href="%2$s">Plugins page</a> on both installs and check for updates.', 'wp-sync-db'), $GLOBALS['wpsdb_meta'][$this->plugin_slug]['version'], network_admin_url('plugins.php')); ?>
-    </div>
-
     <div class="notification-message error-notice directory-permission-notice inline-message" style="display: none;">
       <strong><?php _e('Cannot Access Uploads Directory', 'wp-sync-db'); ?></strong> &mdash;
       <?php
