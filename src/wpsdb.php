@@ -28,7 +28,7 @@ class WPSDB extends WPSDB_Base
   {
     parent::__construct($plugin_file_path);
 
-    $plugin_data = get_plugin_data(plugin_dir_path(dirname(__FILE__)) . 'wp-sync-db.php');
+    $plugin_data = get_plugin_data(plugin_dir_path(dirname(__FILE__)) . 'wp-sync-db.php', true, false);
     $this->plugin_version = $plugin_data['Version'];
 
     $this->max_insert_string_len = 50000; // 50000 is the default as defined by phphmyadmin

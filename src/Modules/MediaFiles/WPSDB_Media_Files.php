@@ -2,6 +2,9 @@
 
 namespace WPSDB\Modules\MediaFiles;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use WP_Error;
 use WPSDB\WPSDB_Base;
 
 class WPSDB_Media_Files extends WPSDB_Base
@@ -333,8 +336,6 @@ class WPSDB_Media_Files extends WPSDB_Base
     $ajax_url = trailingslashit($_POST['url']) . 'wp-admin/admin-ajax.php';
     $response = $this->remote_post($ajax_url, $data, __FUNCTION__);
     $response = $this->verify_remote_post_response($response);
-
-    $upload_dir = $this->uploads_dir();
 
     $remote_attachments = $response['remote_attachments'];
     $remote_media = $response['remote_media'];

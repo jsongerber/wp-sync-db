@@ -1,4 +1,9 @@
 <?php
+
+use WPSDB\WPSDB;
+
+/** @var WPSDB $this */
+
 global $wpdb;
 global $loaded_profile;
 
@@ -26,6 +31,8 @@ if (! $is_default_profile) {
 	 * At the time of page request $this->maybe_update_profile() cannot be used to update a pull profile as we don't know which
 	 * post types exist on the remote machine. As such we invert this selection later using the $convert_post_type_selection flag below.
 	*/
+
+
   if (isset($loaded_profile['post_type_migrate_option']) && 'migrate_select_post_types' == $loaded_profile['post_type_migrate_option'] && 'pull' == $loaded_profile['action']) {
     $convert_post_type_selection = true;
   }
@@ -122,6 +129,10 @@ $loaded_profile = wp_parse_args($loaded_profile, $this->checkbox_options);
     </div>
 
     <p class="connection-status"><?php _e('Please enter the connection information above to continue.', 'wp-sync-db'); ?></p>
+
+    <div class="notification-message error-notice different-plugin-version-notice inline-message" style="display: none;">
+      <b><?php _e('Version Mismatch', 'wp-sync-db'); ?></b> &mdash; <?php printf(__('We\'ve detected you have version <span class="remote-version"></span> of WP Sync DB at <span class="remote-location"></span> but are using %1$s here. Please go to the <a href="%2$s">Plugins page</a> on both installs and check for updates.', 'wp-sync-db'), $this->plugin_version, network_admin_url('plugins.php')); ?>
+    </div>
 
     <div class="notification-message error-notice directory-permission-notice inline-message" style="display: none;">
       <strong><?php _e('Cannot Access Uploads Directory', 'wp-sync-db'); ?></strong> &mdash;
