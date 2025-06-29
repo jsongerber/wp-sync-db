@@ -12,5 +12,10 @@
 	],
 	"scripts": {
 		"test": "./test.sh"
+	},
+	"autoload": {
+		"psr-4": {
+			"WPSDB\\": "src"
+		}
 	}
 }

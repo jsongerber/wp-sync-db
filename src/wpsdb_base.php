@@ -1,10 +1,12 @@
 <?php
+
+namespace WPSDB;
+
 class WPSDB_Base
 {
   protected $settings;
   protected $plugin_file_path;
   protected $plugin_dir_path;
-  protected $plugin_slug;
   protected $plugin_folder_name;
   protected $plugin_basename;
   protected $plugin_base;
@@ -18,7 +20,6 @@ class WPSDB_Base
   protected $error;
   protected $temp_prefix = '_mig_';
   protected $invalid_content_verification_error;
-  protected $addons;
   protected $doing_cli_migration = false;
 
   function __construct($plugin_file_path)
@@ -27,17 +28,6 @@ class WPSDB_Base
     if (!is_array($this->settings)) {
       $this->settings = [];
     }
-
-    $this->addons = array(
-      'wp-sync-db-media-files/wp-sync-db-media-files.php' => array(
-        'name'        => 'Media Files',
-        'required_version'  => '1.1.4b1',
-      ),
-      'wp-sync-db-cli/wp-sync-db-cli.php' => array(
-        'name'        => 'CLI',
-        'required_version'  => '1.0b1',
-      )
-    );
 
     $this->invalid_content_verification_error = '';
 
@@ -361,16 +351,6 @@ class WPSDB_Base
   {
     $path = untrailingslashit($this->plugin_dir_path);
     return substr($path, 0, strrpos($path, DS)) . DS;
-  }
-
-  function is_addon_outdated($addon_basename)
-  {
-    $addon_slug = current(explode('/', $addon_basename));
-    // If pre-1.1.2 version of Media Files addon, then it is outdated
-    if (! isset($GLOBALS['wpsdb_meta'][$addon_slug]['version'])) return true;
-    $installed_version = $GLOBALS['wpsdb_meta'][$addon_slug]['version'];
-    $required_version = $this->addons[$addon_basename]['required_version'];
-    return version_compare($installed_version, $required_version, '<');
   }
 
   function get_plugin_file_path()
