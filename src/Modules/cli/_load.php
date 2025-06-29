@@ -10,14 +10,9 @@ Author URI: https://pixelstudio.id
 Network: True
 */
 
-require_once 'version.php';
-$GLOBALS['wpsdb_meta']['wp-sync-db-cli']['folder'] = basename(plugin_dir_path(__FILE__));
-
 function wp_sync_db_cli_loaded()
 {
-  if (! class_exists('WPSDB_Addon')) return;
-
-  // require_once __DIR__ . '/class/wpsdb-cli.php';
+  if (! class_exists('WPSDB\WPSDB_Base')) return;
 
   // register with wp-cli if it's running, and command hasn't already been defined elsewhere
   if (defined('WP_CLI') && WP_CLI && ! class_exists('WPSDBCLI')) {
