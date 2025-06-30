@@ -9,11 +9,9 @@ GitHub Plugin URI: jsongerber/wp-sync-db
 Network: True
 */
 
-use WPSDB\WPSDB;
+use WPSDB\Modules\CLI\WPSDBCLI;
 
 require 'vendor/autoload.php';
-
-$GLOBALS['wpsdb_meta']['wp-sync-db']['folder'] = basename(plugin_dir_path(__FILE__));
 
 define('WPSDB_ROOT', plugin_dir_url(__FILE__));
 
@@ -29,10 +27,10 @@ if (!defined('DS')) {
 function wp_sync_db_loaded()
 {
   // if neither WordPress admin nor running from wp-cli, exit quickly to prevent performance impact
-  if (!is_admin() && ! (defined('WP_CLI') && WP_CLI)) return;
+  if (!is_admin() && ! (class_exists('WP_CLI') && WP_CLI)) return;
 
   global $wpsdb;
-  $wpsdb = new WPSDB(__FILE__);
+  $wpsdb = new WPSDBCLI(__FILE__);
 }
 
 add_action('plugins_loaded', 'wp_sync_db_loaded');
@@ -44,10 +42,11 @@ function wp_sync_db_init()
 
   load_plugin_textdomain('wp-sync-db', false, dirname(plugin_basename(__FILE__)) . '/languages');
   load_plugin_textdomain('wp-sync-db-media-files', false, dirname(plugin_basename(__FILE__)) . '/languages');
+  load_plugin_textdomain('wp-sync-db-cli', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 }
 
 add_action('init', 'wp_sync_db_init');
 
 // module
 require_once 'src/Modules/MediaFiles/_load.php';
-// require_once 'module-media-files/_load.php';
+require_once 'src/Modules/CLI/_load.php';

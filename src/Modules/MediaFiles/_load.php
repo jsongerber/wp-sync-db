@@ -19,6 +19,8 @@ if (function_exists('wp_sync_db_media_files_loaded')) {
 
 function wp_sync_db_module_media_files_loaded()
 {
+  if (! class_exists('WPSDB\WPSDB_Base')) return;
+
   global $wpsdb_media_files;
   $wpsdb_media_files = new WPSDB_Media_Files(__FILE__);
 }
