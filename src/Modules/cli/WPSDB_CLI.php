@@ -2,6 +2,7 @@
 
 namespace WPSDB\Modules\CLI;
 
+use WP_Error;
 use WPSDB\WPSDB_Base;
 
 class WPSDB_CLI extends WPSDB_Base

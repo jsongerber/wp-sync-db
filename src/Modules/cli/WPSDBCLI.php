@@ -2,11 +2,17 @@
 
 namespace WPSDB\Modules\CLI;
 
+use \WP_CLI;
+
 /**
  * Migrate your DB using WP Sync DB.
  */
-class WPSDBCLI extends WP_CLI_Command
+class WPSDBCLI
 {
+  function __construct()
+  {
+    WP_CLI::add_command('wpsdb', WPSDBCLI::class);
+  }
 
   /**
    * Run a migration.
@@ -39,5 +45,3 @@ class WPSDBCLI extends WP_CLI_Command
     return;
   }
 }
-
-WP_CLI::add_command('wpsdb', 'WPSDBCLI');

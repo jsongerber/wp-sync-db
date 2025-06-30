@@ -17,5 +17,10 @@
 		"psr-4": {
 			"WPSDB\\": "src"
 		}
+	},
+	"require-dev": {
+		"php-stubs/wp-cli-stubs": "^2.12",
+		"php-stubs/wordpress-stubs": "^6.8",
+		"php-stubs/wordpress-globals": "^0.2.0"
 	}
 }
