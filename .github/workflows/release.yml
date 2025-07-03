@@ -1,0 +1,31 @@
+name: Build plugin
+on:
+  push:
+    tags:
+      - 'v*' # Runs on version tags like v1.0.0
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3' # or your plugin's supported version
+      - name: Install composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+      - name: Create zip file
+        run: |
+          PLUGIN_SLUG=$(basename $GITHUB_REPOSITORY)
+          mkdir -p build/$PLUGIN_SLUG
+          rsync -av --exclude='build' --exclude='.git*' --exclude='tests' --exclude='*.yml' --exclude='composer.*' ./ build/$PLUGIN_SLUG/
+          cd build
+          zip -r "${PLUGIN_SLUG}.zip" "$PLUGIN_SLUG"
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
