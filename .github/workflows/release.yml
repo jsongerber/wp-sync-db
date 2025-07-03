@@ -1,5 +1,7 @@
-name: Build and Release Plugin
-on: workflow_dispatch
+name: Build plugin
+on:
+  workflow_dispatch:
+  pull_request:
 # push:
 #   tags:
 #     - 'v*' # Runs on version tags like v1.0.0
@@ -13,7 +15,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3' # or your plugin's supported version
-      - name: Install Composer dependencies
+      - name: Install composer dependencies
         run: composer install --no-dev --optimize-autoloader
       - name: Create zip file
         run: |
