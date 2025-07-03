@@ -9,9 +9,9 @@ GitHub Plugin URI: jsongerber/wp-sync-db
 Network: True
 */
 
-use WPSDB\Modules\CLI\WPSDBCLI;
+require_once dirname(__FILE__) . '/lib/autoload.php';
 
-require 'vendor/autoload.php';
+use WPSDB\WPSDB;
 
 define('WPSDB_ROOT', plugin_dir_url(__FILE__));
 
@@ -30,7 +30,7 @@ function wp_sync_db_loaded()
   if (!is_admin() && ! (class_exists('WP_CLI') && WP_CLI)) return;
 
   global $wpsdb;
-  $wpsdb = new WPSDBCLI(__FILE__);
+  $wpsdb = new WPSDB(__FILE__);
 }
 
 add_action('plugins_loaded', 'wp_sync_db_loaded');
