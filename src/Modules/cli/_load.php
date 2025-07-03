@@ -31,7 +31,7 @@ function wp_sync_db_module_cli_loaded()
 
   // register with wp-cli if it's running, and command hasn't already been defined elsewhere
   if (defined('WP_CLI') && WP_CLI && ! class_exists('WPSDBCLI')) {
-    new WPSDBCLI();
+    WP_CLI::add_command('wpsdb', WPSDBCLI::class);
   }
 
   global $wpsdb_cli;

@@ -9,10 +9,6 @@ use \WP_CLI;
  */
 class WPSDBCLI
 {
-  function __construct()
-  {
-    WP_CLI::add_command('wpsdb', WPSDBCLI::class);
-  }
 
   /**
    * Run a migration.

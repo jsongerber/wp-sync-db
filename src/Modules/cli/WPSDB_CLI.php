@@ -15,6 +15,7 @@ class WPSDB_CLI extends WPSDB_Base
 
   function cli_migration($profile)
   {
+    /** @var WPSDB $wpsdb */
     global $wpsdb;
     $wpsdb_settings = get_option('wpsdb_settings');
     --$profile;
@@ -139,7 +140,7 @@ class WPSDB_CLI extends WPSDB_Base
     $_POST = apply_filters('wpsdb_cli_finalize_migration_args', $_POST, $profile, $verify_connection_response, $initiate_migration_response);
     // don't send redundant POST variables
     $_POST = $this->filter_post_elements($_POST, array('action', 'intent', 'url', 'key', 'form_data', 'prefix', 'type', 'location', 'tables', 'temp_prefix'));
-    $response = trim($wpsdb->ajax_finalize_migration());
+    $response = trim($wpsdb->ajax_finalize_migration() ?? '');
     if (! empty($response)) return $this->cli_error($response);
 
     do_action('wpsdb_cli_after_finalize_migration', $profile, $verify_connection_response, $initiate_migration_response);
