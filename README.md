@@ -1,8 +1,29 @@
 # WP Sync DB
 
+- [Introduction](#introduction)
+- [Description](#description)
+  - [Selective Sync](#selective-sync)
+  - [Bi-directional Sync](#bi-directional-sync)
+  - [Database Export & Backup](#database-export-backup)
+  - [Encrypted Transfers](#encrypted-transfers)
+  - [Automatic Find & Replace](#automatic-find-replace)
+  - [Stress Tested on Massive Sites](#stress-tested-on-massive-sites)
+  - [Detect Limitations Automatically](#detect-limitations-automatically)
+  - [Sync Media Libraries Between Installations](#sync-media-libraries-between-installations)
+- [Installation](#installation)
+  - [Using composer](#using-composer)
+  - [Using git-updater](#using-git-updater)
+- [Similar Tools](#similar-tools)
+- [Isn't this the same as WP Migrate DB Pro?](#isnt-this-the-same-as-wp-migrate-db-pro)
+- [Is this Illegal?](#is-this-illegal)
+
+<!--toc:end-->
+
 > [!NOTE]
-> This fork is lightly maintained, but I'm not actively developing it.
-> No new features are planned, but I'll fix deprecated code and exception from time to time.
+> This fork is maintained and will be updated with bug fixes and security patches.\
+> But no new features are planned, please open a PR if you have a feature request.
+
+## Introduction
 
 WP Sync DB eliminates the manual work of migrating a WP database. Copy your db from one WP install to another with a single-click in your dashboard. Especially handy for syncing a local development database with a live site.
 
@@ -63,39 +84,24 @@ composer require jsongerber/wp-sync-db
 ### Using git-updater
 
 1. Install [git-updater](https://github.com/afragen/git-updater) by downloading the latest zip [here](https://github.com/afragen/git-updater/releases). We rely on this plugin for updating WP Sync DB directly from this git repo.
-2. Install WP Sync DB by downloading the latest zip [here](https://github.com/jsongerber/wp-sync-db/releases). Both github-updater and WP Sync DB will now download their own updates automatically, so you will never need to go through that tedious zip downloading again.
-3. Access the WP Sync DB menu option under Tools.
-4. Install the optional [WP Sync DB Media Files](https://github.com/jsongerber/wp-sync-db-media-files/releases) addon.
+1. Install WP Sync DB by downloading the latest zip [here](https://github.com/jsongerber/wp-sync-db/releases). Both github-updater and WP Sync DB will now download their own updates automatically, so you will never need to go through that tedious zip downloading again.
+1. Access the WP Sync DB menu option under Tools.
+1. Install the optional [WP Sync DB Media Files](https://github.com/jsongerber/wp-sync-db-media-files/releases) addon.
 
-## Help Videos
+### Manual installation (not recommended)
 
-### Feature Walkthrough
+> [!WARNING] This method is not recommended, as you will not receive automatic updates.
 
-<https://www.youtube.com/watch?v=u7jFkwwfeJc>
+1. Download the zip from the [latest release](https://github.com/jsongerber/wp-sync-db/releases/latest).
 
-A brief walkthrough of the WP Sync DB plugin showing all of the different options and explaining them.
+> [!NOTE] You must choose the "wp-sync-db-x.x.x.zip" file, not the "source code" zip.
 
-### Pulling Live Data Into Your Local Development Environment
-
-<http://www.youtube.com/watch?v=IFdHIpf6jjc>
-
-This screencast demonstrates how you can pull data from a remote, live WordPress install and update the data in your local development environment.
-
-### Pushing Local Development Data to a Staging Environment
-
-<http://www.youtube.com/watch?v=FjTzNqAlQE0>
-
-This screencast demonstrates how you can push a local WordPress database you've been using for development to a staging environment.
-
-### Media Files Addon Demo
-
-<http://www.youtube.com/watch?v=0aR8-jC2XXM>
-
-A short demo of how the [Media Files addon](https://github.com/jsongerber/wp-sync-db-media-files) allows you to sync up your WordPress Media Libraries.
+2. Upload the zip to your WordPress site via the Plugins > Add New > Upload Plugin menu.
+1. Activate the plugin.
 
 ## Similar Tools
 
--   [Interconnect IT's Search & Replace](https://github.com/interconnectit/Search-Replace-DB)
+- [Interconnect IT's Search & Replace](https://github.com/interconnectit/Search-Replace-DB)
 
 ## Isn't this the same as WP Migrate DB Pro?
 
