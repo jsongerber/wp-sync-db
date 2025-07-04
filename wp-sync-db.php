@@ -6,6 +6,7 @@ Author: Jason Gerber
 Version: 2.0.0
 Author URI: https://jasongerber.ch
 GitHub Plugin URI: jsongerber/wp-sync-db
+Release Asset: true
 Network: True
 */
 
