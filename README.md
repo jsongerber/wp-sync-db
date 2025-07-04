@@ -13,6 +13,8 @@
 - [Installation](#installation)
   - [Using composer](#using-composer)
   - [Using git-updater](#using-git-updater)
+- [Usage](#usage)
+  - [WP Cli](#wp-cli)
 - [Similar Tools](#similar-tools)
 - [Isn't this the same as WP Migrate DB Pro?](#isnt-this-the-same-as-wp-migrate-db-pro)
 - [Is this Illegal?](#is-this-illegal)
@@ -59,6 +61,10 @@ All data is sent over SSL to prevent your database from being read during the tr
 
 When migrating a WordPress site, URLs in the content, widgets, menus, etc need to be updated to the new site's URL. Doing this manually is annoying, time consuming, and very error-prone. WP Sync DB does all of this for you.
 
+### Media migration
+
+WP Sync DB can also migrate media files between WordPress installations, the module is now integrated into the main plugin. It will automatically copy media files from the source to the destination during a migration, ensuring that all media is up-to-date and consistent across installations.
+
 ### Stress Tested on Massive Sites
 
 Huge database? No prob. WP Sync DB has been tested with tables several GBs in size.
@@ -84,9 +90,12 @@ composer require jsongerber/wp-sync-db
 ### Using git-updater
 
 1. Install [git-updater](https://github.com/afragen/git-updater) by downloading the latest zip [here](https://github.com/afragen/git-updater/releases). We rely on this plugin for updating WP Sync DB directly from this git repo.
-1. Install WP Sync DB by downloading the latest zip [here](https://github.com/jsongerber/wp-sync-db/releases). Both github-updater and WP Sync DB will now download their own updates automatically, so you will never need to go through that tedious zip downloading again.
-1. Access the WP Sync DB menu option under Tools.
-1. Install the optional [WP Sync DB Media Files](https://github.com/jsongerber/wp-sync-db-media-files/releases) addon.
+1. Activate git-updater, then go to Settings > Git Updater.
+1. If asked, enter your license key or click "Activate Free Version".
+1. Go to the "Install Plugin" tab.
+1. Enter "https://github.com/jsongerber/wp-sync-db" in the "Plugin URI" field, you can leave the other fields blank.
+1. Click "Install Plugin" and wait for the confirmation message.
+1. Click the "Activate Plugin" link that appears after installation.
 
 ### Manual installation (not recommended)
 
@@ -97,7 +106,28 @@ composer require jsongerber/wp-sync-db
 > [!NOTE] You must choose the "wp-sync-db-x.x.x.zip" file, not the "source code" zip.
 
 2. Upload the zip to your WordPress site via the Plugins > Add New > Upload Plugin menu.
-1. Activate the plugin.
+3. Activate the plugin.
+
+## Usage
+
+Once installed, you can access WP Sync DB from the Tools > WP Sync DB menu in your WordPress admin dashboard. From there, you can create migration profiles, perform migrations, and manage your database syncs.
+
+### WP Cli
+
+To use WP Sync DB via WP-CLI, you must first create a migration profile in the WP Sync DB admin interface.\
+Once you have a profile set up, you can get its id by going to the "Migrate" tab in the WP Sync DB admin interface. The profile number is displayed next to the profile name.
+
+Or you can use the WP-CLI command to list all profiles:
+
+```bash
+wp wpsdb profiles
+```
+
+Once you have the profile number, you can run the migration using the following command:
+
+```bash
+wp wpsdb migrate [profile-number]
+```
 
 ## Similar Tools
 
