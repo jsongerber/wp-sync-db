@@ -10,6 +10,13 @@ Release Asset: true
 Network: True
 */
 
+if (!file_exists(dirname(__FILE__) . '/lib/autoload.php')) {
+  add_action('admin_notices', function () {
+    echo '<div class="notice notice-error is-dismissible"><p>' . __('Some files seem to be missing from the installation, if you have manually installed the plugin, please reinstall using the zip in the <a href="https://github.com/jsongerber/wp-sync-db/releases/latest" target="_blank">latest release</a> or follow the instruction in the <a href="https://github.com/jsongerber/wp-sync-db#installation" target="_blank">readme</a>', 'wp-sync-db') . '</p></div>';
+  });
+  return;
+}
+
 require_once dirname(__FILE__) . '/lib/autoload.php';
 
 use WPSDB\WPSDB;
