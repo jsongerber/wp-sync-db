@@ -2,6 +2,10 @@
 
 namespace WPSDB;
 
+use DateInterval;
+use DatePeriod;
+use Exception;
+
 class WPSDB extends WPSDB_Base
 {
   protected $fp;
