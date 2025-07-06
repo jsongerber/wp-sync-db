@@ -1,4 +1,7 @@
 <?php
+
+namespace WPSDB;
+
 class WPSDB extends WPSDB_Base
 {
   protected $fp;
@@ -25,8 +28,8 @@ class WPSDB extends WPSDB_Base
   {
     parent::__construct($plugin_file_path);
 
-    $this->plugin_slug = 'wp-sync-db';
-    $this->plugin_version = $GLOBALS['wpsdb_meta']['wp-sync-db']['version'];
+    $plugin_data = get_plugin_data(plugin_dir_path(dirname(__FILE__)) . 'wp-sync-db.php', true, false);
+    $this->plugin_version = $plugin_data['Version'];
 
     $this->max_insert_string_len = 50000; // 50000 is the default as defined by phphmyadmin
 
@@ -1374,27 +1377,8 @@ class WPSDB extends WPSDB_Base
 
       <h2 class="nav-tab-wrapper"><a href="#" class="nav-tab nav-tab-active js-action-link migrate" data-div-name="migrate-tab"><?php _e('Migrate', 'wp-sync-db'); ?></a><a href="#" class="nav-tab js-action-link settings" data-div-name="settings-tab"><?php _e('Settings', 'wp-sync-db'); ?></a><a href="#" class="nav-tab js-action-link help" data-div-name="help-tab"><?php _e('Help', 'wp-sync-db'); ?></a></h2>
 
-      <?php do_action('wpsdb_notices'); ?>
-
       <?php
-      $hide_warning = apply_filters('wpsdb_hide_outdated_addons_warning', false);
-
-      foreach ($this->addons as $addon_basename => $addon) {
-        if (false == $this->is_addon_outdated($addon_basename) || false == is_plugin_active($addon_basename)) continue;
-        $update_url = wp_nonce_url(network_admin_url('update.php?action=upgrade-plugin&plugin=' . urlencode($addon_basename)), 'upgrade-plugin_' . $addon_basename);
-        $addon_slug = current(explode('/', $addon_basename));
-        if (isset($GLOBALS['wpsdb_meta'][$addon_slug]['version'])) {
-          $version = ' (' . $GLOBALS['wpsdb_meta'][$addon_slug]['version'] . ')';
-        } else {
-          $version = '';
-        }
-      ?>
-        <div class="updated warning inline-message">
-          <strong>Update Required</strong> &mdash;
-          <?php printf(__('The version of the %1$s addon you have installed%2$s is out-of-date and will not work with this version WP Sync DB. <a href="%3$s">Update Now</a>', 'wp-sync-db'), $addon['name'], $version, $update_url); ?>
-        </div>
-      <?php
-      }
+      do_action('wpsdb_notices');
 
       $hide_warning = apply_filters('wpsdb_hide_safe_mode_warning', false);
       if (function_exists('ini_get') && ini_get('safe_mode') && !$hide_warning) { ?>

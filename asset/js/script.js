@@ -1561,15 +1561,10 @@ var execute_next_step;
 		// check for hash in url (settings || migrate) switch tabs accordingly
 		if (window.location.hash) {
 			var hash = window.location.hash.substring(1);
-			switch_to_plugin_tab(hash, false);
+			switch_to_plugin_tab(hash);
 		}
 
-		if (get_query_var('install-plugin') != '') {
-			hash = 'addons';
-			switch_to_plugin_tab(hash, true);
-		}
-
-		function switch_to_plugin_tab(hash, skip_addons_check) {
+		function switch_to_plugin_tab(hash) {
 			$('.nav-tab').removeClass('nav-tab-active');
 			$('.nav-tab.' + hash).addClass('nav-tab-active');
 			$('.content-tab').hide();

@@ -1,8 +1,20 @@
 # WP Sync DB
 
+<!-- toc -->
+- [Introduction](#introduction)
+- [Description and features](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Similar Tools](#similar-tools)
+- [Isn't this the same as WP Migrate DB Pro?](#isnt-this-the-same-as-wp-migrate-db-pro)
+- [Is this Illegal?](#is-this-illegal)
+<!--toc:end-->
+
 > [!NOTE]
-> This fork is lightly maintained, but I'm not actively developing it.
-> No new features are planned, but I'll fix deprecated code and exception from time to time.
+> This fork is maintained and will be updated with bug fixes and security patches.\
+> But no new features are planned, please open a PR if you have a feature request.
+
+## Introduction
 
 WP Sync DB eliminates the manual work of migrating a WP database. Copy your db from one WP install to another with a single-click in your dashboard. Especially handy for syncing a local development database with a live site.
 
@@ -38,6 +50,10 @@ All data is sent over SSL to prevent your database from being read during the tr
 
 When migrating a WordPress site, URLs in the content, widgets, menus, etc need to be updated to the new site's URL. Doing this manually is annoying, time consuming, and very error-prone. WP Sync DB does all of this for you.
 
+### Media migration
+
+WP Sync DB can also migrate media files between WordPress installations, the module is now integrated into the main plugin. It will automatically copy media files from the source to the destination during a migration, ensuring that all media is up-to-date and consistent across installations.
+
 ### Stress Tested on Massive Sites
 
 Huge database? No prob. WP Sync DB has been tested with tables several GBs in size.
@@ -63,39 +79,48 @@ composer require jsongerber/wp-sync-db
 ### Using git-updater
 
 1. Install [git-updater](https://github.com/afragen/git-updater) by downloading the latest zip [here](https://github.com/afragen/git-updater/releases). We rely on this plugin for updating WP Sync DB directly from this git repo.
-2. Install WP Sync DB by downloading the latest zip [here](https://github.com/jsongerber/wp-sync-db/releases). Both github-updater and WP Sync DB will now download their own updates automatically, so you will never need to go through that tedious zip downloading again.
-3. Access the WP Sync DB menu option under Tools.
-4. Install the optional [WP Sync DB Media Files](https://github.com/jsongerber/wp-sync-db-media-files/releases) addon.
+1. Activate git-updater, then go to Settings > Git Updater.
+1. If asked, enter your license key or click "Activate Free Version".
+1. Go to the "Install Plugin" tab.
+1. Enter "https://github.com/jsongerber/wp-sync-db" in the "Plugin URI" field, you can leave the other fields blank.
+1. Click "Install Plugin" and wait for the confirmation message.
+1. Click the "Activate Plugin" link that appears after installation.
 
-## Help Videos
+### Manual installation (not recommended)
 
-### Feature Walkthrough
+> [!WARNING] This method is not recommended, as you will not receive automatic updates.
 
-<https://www.youtube.com/watch?v=u7jFkwwfeJc>
+1. Download the zip from the [latest release](https://github.com/jsongerber/wp-sync-db/releases/latest).
 
-A brief walkthrough of the WP Sync DB plugin showing all of the different options and explaining them.
+> [!NOTE] You must choose the "wp-sync-db-x.x.x.zip" file, not the "source code" zip.
 
-### Pulling Live Data Into Your Local Development Environment
+2. Upload the zip to your WordPress site via the Plugins > Add New > Upload Plugin menu.
+3. Activate the plugin.
 
-<http://www.youtube.com/watch?v=IFdHIpf6jjc>
+## Usage
 
-This screencast demonstrates how you can pull data from a remote, live WordPress install and update the data in your local development environment.
+Once installed, you can access WP Sync DB from the Tools > WP Sync DB menu in your WordPress admin dashboard. From there, you can create migration profiles, perform migrations, and manage your database syncs.
 
-### Pushing Local Development Data to a Staging Environment
+### WP Cli
 
-<http://www.youtube.com/watch?v=FjTzNqAlQE0>
+To use WP Sync DB via WP-CLI, you must first create a migration profile in the WP Sync DB admin interface.\
+Once you have a profile set up, you can get its id by going to the "Migrate" tab in the WP Sync DB admin interface. The profile number is displayed next to the profile name.
 
-This screencast demonstrates how you can push a local WordPress database you've been using for development to a staging environment.
+Or you can use the WP-CLI command to list all profiles:
 
-### Media Files Addon Demo
+```bash
+wp wpsdb profiles
+```
 
-<http://www.youtube.com/watch?v=0aR8-jC2XXM>
+Once you have the profile number, you can run the migration using the following command:
 
-A short demo of how the [Media Files addon](https://github.com/jsongerber/wp-sync-db-media-files) allows you to sync up your WordPress Media Libraries.
+```bash
+wp wpsdb migrate [profile-number]
+```
 
 ## Similar Tools
 
--   [Interconnect IT's Search & Replace](https://github.com/interconnectit/Search-Replace-DB)
+- [Interconnect IT's Search & Replace](https://github.com/interconnectit/Search-Replace-DB)
 
 ## Isn't this the same as WP Migrate DB Pro?
 
