@@ -50,11 +50,25 @@ class WPSDBCLI
       return;
     }
 
-    foreach ($wpsdb_settings['profiles'] as $i => $profile) {
-      $profile_id = $i + 1;
-      $profile_name = $profile['name'] ?? sprintf(__('Profile %d', 'wp-sync-db-cli'), $profile_id);
 
-      WP_CLI::log(WP_CLI::colorize('%G' . $profile_id . '%n ' . $profile_name));
+    $longest_name_length = 0;
+    $lines = [];
+    foreach ($wpsdb_settings['profiles'] as $i => $profile) {
+      $id = $i + 1;
+      $name = $profile['name'] ?? sprintf(__('Profile %d', 'wp-sync-db-cli'), $id);
+      $action = strtoupper($profile['action'] ?? '');
+      if (strlen($name) > $longest_name_length) {
+        $longest_name_length = strlen($name);
+      }
+
+      $lines[] = '    %G' . str_pad($id, 6, ' ') . '%n|    %y' . str_pad($action, 10, ' ') . '%n|    ' . $name;
+    }
+
+    WP_CLI::log(WP_CLI::colorize('    %GID%n    |    %yAction%n    |    Name'));
+    WP_CLI::log(WP_CLI::colorize('-------------------------------' . str_repeat('-', $longest_name_length)));
+
+    foreach ($lines as $line) {
+      WP_CLI::log(WP_CLI::colorize($line));
     }
   }
 }
