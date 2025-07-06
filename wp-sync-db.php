@@ -1,14 +1,15 @@
 <?php
-/*
-Plugin Name: WP Sync DB
-Description: Export, push, and pull to migrate your WordPress databases.
-Author: Jason Gerber
-Version: 2.0.0
-Author URI: https://jasongerber.ch
-GitHub Plugin URI: jsongerber/wp-sync-db
-Release Asset: true
-Network: True
-*/
+
+/**
+ * Plugin Name: WP Sync DB
+ * Description: Export, push, and pull to migrate your WordPress databases.
+ * Author: Jason Gerber
+ * Version: 2.0.0
+ * Author URI: https://jasongerber.ch
+ * GitHub Plugin URI: jsongerber/wp-sync-db
+ * Release Asset: true
+ * Network: True
+ */
 
 if (!file_exists(dirname(__FILE__) . '/lib/autoload.php')) {
   add_action('admin_notices', function () {
