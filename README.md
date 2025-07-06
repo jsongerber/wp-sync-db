@@ -1,24 +1,13 @@
 # WP Sync DB
 
+<!-- toc -->
 - [Introduction](#introduction)
-- [Description](#description)
-  - [Selective Sync](#selective-sync)
-  - [Bi-directional Sync](#bi-directional-sync)
-  - [Database Export & Backup](#database-export-backup)
-  - [Encrypted Transfers](#encrypted-transfers)
-  - [Automatic Find & Replace](#automatic-find-replace)
-  - [Stress Tested on Massive Sites](#stress-tested-on-massive-sites)
-  - [Detect Limitations Automatically](#detect-limitations-automatically)
-  - [Sync Media Libraries Between Installations](#sync-media-libraries-between-installations)
+- [Description and features](#description)
 - [Installation](#installation)
-  - [Using composer](#using-composer)
-  - [Using git-updater](#using-git-updater)
 - [Usage](#usage)
-  - [WP Cli](#wp-cli)
 - [Similar Tools](#similar-tools)
 - [Isn't this the same as WP Migrate DB Pro?](#isnt-this-the-same-as-wp-migrate-db-pro)
 - [Is this Illegal?](#is-this-illegal)
-
 <!--toc:end-->
 
 > [!NOTE]
