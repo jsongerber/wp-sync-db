@@ -1,0 +1,20 @@
+{
+    "name": "php-stubs/wordpress-globals",
+    "description": "Global variables and global constants from WordPress core.",
+    "keywords": [
+        "wordpress",
+        "static analysis",
+        "phpstan",
+        "globals",
+        "constants"
+    ],
+    "homepage": "https://github.com/php-stubs/wordpress-globals",
+    "license": "MIT",
+    "require-dev": {
+        "php": "~7.1"
+    },
+    "suggest": {
+        "php-stubs/wordpress-stubs": "Up-to-date WordPress function and class declaration stubs",
+        "szepeviktor/phpstan-wordpress": "WordPress extensions for PHPStan"
+    }
+}
