@@ -32,6 +32,10 @@ class WPSDB extends WPSDB_Base
   {
     parent::__construct($plugin_file_path);
 
+    if (! function_exists('get_plugin_data')) {
+      require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+
     $plugin_data = get_plugin_data(plugin_dir_path(dirname(__FILE__)) . 'wp-sync-db.php', true, false);
     $this->plugin_version = $plugin_data['Version'];
 
