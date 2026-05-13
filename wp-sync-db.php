@@ -45,7 +45,7 @@ if (!defined('DS')) {
 function wp_sync_db_loaded()
 {
   // if neither WordPress admin nor running from wp-cli, exit quickly to prevent performance impact
-  if (!is_admin() && ! (class_exists('WP_CLI') && WP_CLI)) return;
+  if (!is_admin() && ! (defined('WP_CLI') && WP_CLI)) return;
 
   global $wpsdb;
   $wpsdb = new WPSDB(__FILE__);
