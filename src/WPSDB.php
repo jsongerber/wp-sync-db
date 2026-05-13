@@ -2009,7 +2009,7 @@ class WPSDB extends WPSDB_Base
    *
    * @return array    The original array with all elements replaced as needed.
    */
-  function recursive_unserialize_replace($data, $serialized = false, $parent_serialized = false)
+  function recursive_unserialize_replace($data, $serialized = false, $parent_serialized = false, &$visited = [])
   {
 
     $is_json = false;
@@ -2022,11 +2022,11 @@ class WPSDB extends WPSDB_Base
         if (is_object($unserialized)) {
           if ($unserialized instanceof DateInterval || $unserialized instanceof DatePeriod) return $data;
         }
-        $data = $this->recursive_unserialize_replace($unserialized, true, true);
+        $data = $this->recursive_unserialize_replace($unserialized, true, true, $visited);
       } elseif (is_array($data)) {
         $_tmp = array();
         foreach ($data as $key => $value) {
-          $_tmp[$key] = $this->recursive_unserialize_replace($value, false, $parent_serialized);
+          $_tmp[$key] = $this->recursive_unserialize_replace($value, false, $parent_serialized, $visited);
         }
 
         $data = $_tmp;
@@ -2034,18 +2034,25 @@ class WPSDB extends WPSDB_Base
       }
       // Submitted by Tina Matter
       elseif (is_object($data)) {
+        $hash = spl_object_hash($data);
+        if (isset($visited[$hash])) {
+          return $data; // we're inside this object already — circular ref
+        }
+        $visited[$hash] = true;
+
         $_tmp = clone $data;
         foreach ($data as $key => $value) {
-          $_tmp->$key = $this->recursive_unserialize_replace($value, false, $parent_serialized);
+          $_tmp->$key = $this->recursive_unserialize_replace($value, false, $parent_serialized, $visited);
         }
 
+        unset($visited[$hash]); // allow re-processing if seen in another branch
         $data = $_tmp;
         unset($_tmp);
       } elseif ($this->is_json($data, true)) {
         $_tmp = array();
         $data = json_decode($data, true);
         foreach ($data as $key => $value) {
-          $_tmp[$key] = $this->recursive_unserialize_replace($value, false, $parent_serialized);
+          $_tmp[$key] = $this->recursive_unserialize_replace($value, false, $parent_serialized, $visited);
         }
 
         $data = $_tmp;
