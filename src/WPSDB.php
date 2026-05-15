@@ -5,6 +5,7 @@ namespace WPSDB;
 use DateInterval;
 use DatePeriod;
 use Exception;
+use ReflectionProperty;
 
 class WPSDB extends WPSDB_Base
 {
@@ -707,7 +708,13 @@ class WPSDB extends WPSDB_Base
       $wpdb->charset = $charset;
       $wpdb->set_charset($wpdb->dbh, $wpdb->charset);
     }
+
+    // Force setting `check_current_query` to false because it can cause problems when inserting emojis depending on the charset
+    $reflection = new ReflectionProperty($wpdb, 'check_current_query');
+
     foreach ($queries as $query) {
+      $reflection->setValue($wpdb, false);
+
       if (false === $wpdb->query($query)) {
         $return = ob_get_clean();
         $result = $this->end_ajax($return);
