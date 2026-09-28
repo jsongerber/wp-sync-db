@@ -27,6 +27,7 @@ class WPSDB extends WPSDB_Base
   protected $alter_table_name;
   protected $session_salt;
   protected $primary_keys;
+  protected $binary_key_columns = array();
   protected $checkbox_options;
 
   function __construct($plugin_file_path)
@@ -1591,6 +1592,8 @@ class WPSDB extends WPSDB_Base
    */
   function get_table_key_columns($table, $table_structure)
   {
+    $this->binary_key_columns = array();
+
     $not_null = array();
     $types = array();
     foreach ($table_structure as $col) {
@@ -1644,7 +1647,18 @@ class WPSDB extends WPSDB_Base
 
     $keys = array();
     foreach ($key_columns as $column) {
-      $keys[$column] = (isset($types[$column]) && $this->is_integer_type($types[$column])) ? 0 : '';
+      $type = isset($types[$column]) ? $types[$column] : '';
+      if ($this->is_integer_type($type)) {
+        $keys[$column] = 0;
+      } elseif ($this->is_binary_type($type)) {
+        // Binary key values are not valid UTF-8 and cannot be transported
+        // through JSON/stripslashes, so store them hex encoded and compare
+        // with UNHEX() when building the keyset WHERE clause.
+        $this->binary_key_columns[$column] = true;
+        $keys[$column] = '';
+      } else {
+        $keys[$column] = '';
+      }
     }
 
     return $keys;
@@ -1659,6 +1673,34 @@ class WPSDB extends WPSDB_Base
   function is_integer_type($type)
   {
     return (bool) preg_match('/^(tinyint|smallint|mediumint|int|bigint)/i', $type);
+  }
+
+  /**
+   * Whether the given column type stores raw bytes rather than text.
+   *
+   * @param string  $type
+   * @return bool
+   */
+  function is_binary_type($type)
+  {
+    return (bool) preg_match('/^(binary|varbinary|tinyblob|blob|mediumblob|longblob)/i', $type);
+  }
+
+  /**
+   * Update the stored key values from the row currently being exported.
+   *
+   * Binary columns are hex encoded so the key values stay valid UTF-8 and can
+   * be serialized and transported (see get_table_key_columns).
+   *
+   * @param object  $row
+   */
+  function update_primary_keys($row)
+  {
+    foreach ($this->primary_keys as $primary_key => $value) {
+      $this->primary_keys[$primary_key] = isset($this->binary_key_columns[$primary_key])
+        ? bin2hex($row->$primary_key)
+        : $row->$primary_key;
+    }
   }
 
   /**
@@ -1889,7 +1931,14 @@ class WPSDB extends WPSDB_Base
             foreach ($temp_primary_keys as $primary_key => $value) {
               // only the last field in the key should be different in this subclause
               $operator = (count($temp_primary_keys) - 1 == $i ? '>' : '=');
-              $subclauses[] = sprintf('%s %s %s', $this->backquote($primary_key), $operator, $wpdb->prepare('%s', $value));
+              if (isset($this->binary_key_columns[$primary_key])) {
+                // $value is hex encoded (see get_table_key_columns); UNHEX keeps
+                // the comparison binary-safe and able to use the index.
+                $value_sql = "UNHEX('" . $value . "')";
+              } else {
+                $value_sql = $wpdb->prepare('%s', $value);
+              }
+              $subclauses[] = sprintf('%s %s %s', $this->backquote($primary_key), $operator, $value_sql);
               ++$i;
             }
 
@@ -1982,9 +2031,7 @@ class WPSDB extends WPSDB_Base
               ++$this->row_tracker;
 
               if (!empty($this->primary_keys)) {
-                foreach ($this->primary_keys as $primary_key => $value) {
-                  $this->primary_keys[$primary_key] = $row->$primary_key;
-                }
+                $this->update_primary_keys($row);
               }
             }
             $insert_buffer = rtrim($insert_buffer, "\n,");
@@ -2009,9 +2056,7 @@ class WPSDB extends WPSDB_Base
           ++$this->row_tracker;
 
           if (!empty($this->primary_keys)) {
-            foreach ($this->primary_keys as $primary_key => $value) {
-              $this->primary_keys[$primary_key] = $row->$primary_key;
-            }
+            $this->update_primary_keys($row);
           }
         }
         $row_start += $row_inc;
