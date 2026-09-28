@@ -821,7 +821,7 @@ class WPSDB extends WPSDB_Base
       // returned data is just a big string like this query;query;query;33
       // need to split this up into a chunk and row_tracker
       $row_information = trim(substr(strrchr($response, "\n"), 1));
-      $row_information = explode(',', $row_information);
+      $row_information = explode(',', $row_information, 2);
       $chunk = substr($response, 0, strrpos($response, ";\n") + 1);
 
       if (!empty($chunk)) {
@@ -988,6 +988,8 @@ class WPSDB extends WPSDB_Base
       }
 
       if ($_POST['intent'] == 'pull') {
+        $this->delete_temporary_tables($this->temp_prefix);
+
         // sets up our table to store 'ALTER' queries
         $create_alter_table_query = $this->get_create_alter_table_query();
         $process_chunk_result = $this->process_chunk($create_alter_table_query);
@@ -1043,6 +1045,8 @@ class WPSDB extends WPSDB_Base
     }
 
     if ($_POST['intent'] == 'push') {
+      $this->delete_temporary_tables($this->temp_prefix);
+
       // sets up our table to store 'ALTER' queries
       $create_alter_table_query = $this->get_create_alter_table_query();
       $process_chunk_result = $this->process_chunk($create_alter_table_query);
@@ -1572,6 +1576,92 @@ class WPSDB extends WPSDB_Base
   }
 
   /**
+   * Determine the columns to use for deterministic, keyset-based pagination.
+   *
+   * The primary key is preferred. When a table has no primary key (or one that
+   * cannot be compared reliably) the first unique index whose columns are all
+   * NOT NULL is used, e.g. the UNIQUE KEY on `wp_quform_sessions`.`id`.
+   *
+   * Returns an ordered map of column name => seed value, or an empty array when
+   * no suitable key can be found.
+   *
+   * @param string  $table
+   * @param array   $table_structure  Result of DESCRIBE on the table
+   * @return array
+   */
+  function get_table_key_columns($table, $table_structure)
+  {
+    $not_null = array();
+    $types = array();
+    foreach ($table_structure as $col) {
+      $types[$col->Field] = $col->Type;
+      if (isset($col->Null) && strtoupper($col->Null) === 'NO') {
+        $not_null[$col->Field] = true;
+      }
+    }
+
+    // Prefer the primary key, regardless of column type.
+    $key_columns = array();
+    foreach ($table_structure as $col) {
+      if (isset($col->Key) && $col->Key === 'PRI') {
+        $key_columns[] = $col->Field;
+      }
+    }
+
+    // Fall back to the first unique index whose columns are all NOT NULL.
+    if (empty($key_columns)) {
+      global $wpdb;
+
+      $indexes = $wpdb->get_results('SHOW INDEX FROM ' . $this->backquote($table));
+      $unique_indexes = array();
+      foreach ($indexes as $index) {
+        if ((int) $index->Non_unique !== 0 || empty($index->Column_name)) {
+          continue;
+        }
+        $unique_indexes[$index->Key_name][(int) $index->Seq_in_index] = $index->Column_name;
+      }
+
+      foreach ($unique_indexes as $columns) {
+        ksort($columns);
+        $candidate = array_values($columns);
+        $usable = true;
+        foreach ($candidate as $column) {
+          if (!isset($not_null[$column])) {
+            $usable = false;
+            break;
+          }
+        }
+        if ($usable) {
+          $key_columns = $candidate;
+          break;
+        }
+      }
+    }
+
+    if (empty($key_columns)) {
+      return array();
+    }
+
+    $keys = array();
+    foreach ($key_columns as $column) {
+      $keys[$column] = (isset($types[$column]) && $this->is_integer_type($types[$column])) ? 0 : '';
+    }
+
+    return $keys;
+  }
+
+  /**
+   * Whether the given column type is an integer type.
+   *
+   * @param string  $type
+   * @return bool
+   */
+  function is_integer_type($type)
+  {
+    return (bool) preg_match('/^(tinyint|smallint|mediumint|int|bigint)/i', $type);
+  }
+
+  /**
    * Taken partially from phpMyAdmin and partially from
    * Alain Wolf, Zurich - Switzerland
    * Website: http://restkultur.ch/personal/wolf/scripts/db_backup/
@@ -1710,19 +1800,11 @@ class WPSDB extends WPSDB_Base
       $table_name = $temp_prefix . $table;
     }
 
-    $this->primary_keys = array();
-    $use_primary_keys = true;
     foreach ($table_structure as $col) {
       $field_set[] = $this->backquote($col->Field);
-      if ($col->Key == 'PRI' && true == $use_primary_keys) {
-        if (false === strpos($col->Type, 'int')) {
-          $use_primary_keys = false;
-          $this->primary_keys = array();
-          continue;
-        }
-        $this->primary_keys[$col->Field] = 0;
-      }
     }
+
+    $this->primary_keys = $this->get_table_key_columns($table, $table_structure);
 
     $first_select = true;
     if (!empty($_POST['primary_keys'])) {
@@ -2572,13 +2654,12 @@ class WPSDB extends WPSDB_Base
 
   function delete_temporary_tables($prefix)
   {
-    $tables = $this->get_tables();
-    $delete_queries = '';
-    foreach ($tables as $table) {
+    global $wpdb;
+
+    foreach ($this->get_tables() as $table) {
       if (0 !== strpos($table, $prefix)) continue;
-      $delete_queries .= sprintf("DROP TABLE %s;\n", $this->backquote($table));
+      $wpdb->query('DROP TABLE IF EXISTS ' . $this->backquote($table));
     }
-    $this->process_chunk($delete_queries);
   }
 
   function empty_current_chunk()
