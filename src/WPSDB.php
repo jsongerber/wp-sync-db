@@ -893,7 +893,6 @@ class WPSDB extends WPSDB_Base
 
     // verification will fail unless we strip slashes on primary_keys and form_data
     $filtered_post['primary_keys'] = stripslashes($filtered_post['primary_keys']);
-    $filtered_post['form_data'] = stripslashes($filtered_post['form_data']);
     if (isset($filtered_post['path_current_site'])) {
       $filtered_post['path_current_site'] = stripslashes($filtered_post['path_current_site']);
     }
