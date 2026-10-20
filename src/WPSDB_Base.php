@@ -267,6 +267,12 @@ class WPSDB_Base
     if (isset($post_array['form_data'])) {
       $post_array['form_data'] = stripslashes($post_array['form_data']);
     }
+    return $this->keep_accepted_elements($post_array, $accepted_elements);
+  }
+
+  // Keeps only the accepted elements (plus 'sig'), leaving values untouched
+  function keep_accepted_elements($post_array, $accepted_elements)
+  {
     $accepted_elements[] = 'sig';
     return array_intersect_key($post_array, array_flip($accepted_elements));
   }

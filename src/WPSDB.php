@@ -29,6 +29,15 @@ class WPSDB extends WPSDB_Base
   protected $primary_keys;
   protected $binary_key_columns = array();
   protected $checkbox_options;
+  // Elements each nopriv handler verifies. Senders sign only these, so fields
+  // injected into $_POST by other plugins (e.g. Polylang's pll_ajax_backend)
+  // don't end up in the signature.
+  protected $remote_post_elements = array(
+    'wpsdb_remote_finalize_migration' => array('action', 'intent', 'url', 'key', 'form_data', 'prefix', 'type', 'location', 'tables', 'temp_prefix'),
+    'wpsdb_backup_remote_table' => array('action', 'intent', 'url', 'key', 'table', 'form_data', 'stage', 'bottleneck', 'prefix', 'current_row', 'dump_filename', 'last_table', 'gzip', 'primary_keys', 'path_current_site', 'domain_current_site'),
+    'wpsdb_process_pull_request' => array('action', 'intent', 'url', 'key', 'table', 'form_data', 'stage', 'bottleneck', 'prefix', 'current_row', 'dump_filename', 'pull_limit', 'last_table', 'gzip', 'primary_keys', 'path_current_site', 'domain_current_site'),
+    'wpsdb_process_push_migration_cancellation' => array('action', 'intent', 'url', 'key', 'form_data', 'dump_filename', 'temp_prefix', 'stage'),
+  );
 
   function __construct($plugin_file_path)
   {
@@ -530,6 +539,14 @@ class WPSDB extends WPSDB_Base
   }
 
   // After table migration, delete old tables and rename new tables removing the temporarily prefix
+  // Drops elements the remote handler for $data['action'] won't verify, then signs
+  function sign_remote_post_data($data, $key)
+  {
+    $data = $this->keep_accepted_elements($data, $this->remote_post_elements[$data['action']]);
+    $data['sig'] = $this->create_signature($data, $key);
+    return $data;
+  }
+
   function ajax_finalize_migration()
   {
     $this->check_ajax_referer('finalize-migration');
@@ -549,7 +566,7 @@ class WPSDB extends WPSDB_Base
       $data['type'] = 'push';
       $data['location'] = home_url();
       $data['temp_prefix'] = $this->temp_prefix;
-      $data['sig'] = $this->create_signature($data, $data['key']);
+      $data = $this->sign_remote_post_data($data, $data['key']);
       $ajax_url = trailingslashit($_POST['url']) . 'wp-admin/admin-ajax.php';
       $response = $this->remote_post($ajax_url, $data, __FUNCTION__);
       ob_start();
@@ -563,7 +580,7 @@ class WPSDB extends WPSDB_Base
 
   function respond_to_remote_finalize_migration()
   {
-    $filtered_post = $this->filter_post_elements($_POST, array('action', 'intent', 'url', 'key', 'form_data', 'prefix', 'type', 'location', 'tables', 'temp_prefix'));
+    $filtered_post = $this->filter_post_elements($_POST, $this->remote_post_elements['wpsdb_remote_finalize_migration']);
     if (!$this->verify_signature($filtered_post, $this->settings['key'])) {
       $error_msg = $this->invalid_content_verification_error . ' (#123)';
       $this->log_error($error_msg, $filtered_post);
@@ -745,7 +762,7 @@ class WPSDB extends WPSDB_Base
         $data['intent'] = 'pull';
         $ajax_url = trailingslashit($_POST['url']) . 'wp-admin/admin-ajax.php';
         $data['primary_keys'] = stripslashes($data['primary_keys']);
-        $data['sig'] = $this->create_signature($data, $data['key']);
+        $data = $this->sign_remote_post_data($data, $data['key']);
         $response = $this->remote_post($ajax_url, $data, __FUNCTION__);
         ob_start();
         $this->display_errors();
@@ -803,7 +820,7 @@ class WPSDB extends WPSDB_Base
       }
       $ajax_url = trailingslashit($data['url']) . 'wp-admin/admin-ajax.php';
       $data['primary_keys'] = stripslashes($data['primary_keys']);
-      $data['sig'] = $this->create_signature($data, $data['key']);
+      $data = $this->sign_remote_post_data($data, $data['key']);
 
       $response = $this->remote_post($ajax_url, $data, __FUNCTION__);
       ob_start();
@@ -845,7 +862,7 @@ class WPSDB extends WPSDB_Base
 
   function respond_to_backup_remote_table()
   {
-    $filtered_post = $this->filter_post_elements($_POST, array('action', 'intent', 'url', 'key', 'table', 'form_data', 'stage', 'bottleneck', 'prefix', 'current_row', 'dump_filename', 'last_table', 'gzip', 'primary_keys', 'path_current_site', 'domain_current_site'));
+    $filtered_post = $this->filter_post_elements($_POST, $this->remote_post_elements['wpsdb_backup_remote_table']);
     $filtered_post['primary_keys'] = stripslashes($filtered_post['primary_keys']);
     if (!$this->verify_signature($filtered_post, $this->settings['key'])) {
       $error_msg = $this->invalid_content_verification_error . ' (#137)';
@@ -889,7 +906,7 @@ class WPSDB extends WPSDB_Base
 
   function respond_to_process_pull_request()
   {
-    $filtered_post = $this->filter_post_elements($_POST, array('action', 'intent', 'url', 'key', 'table', 'form_data', 'stage', 'bottleneck', 'prefix', 'current_row', 'dump_filename', 'pull_limit', 'last_table', 'gzip', 'primary_keys', 'path_current_site', 'domain_current_site'));
+    $filtered_post = $this->filter_post_elements($_POST, $this->remote_post_elements['wpsdb_process_pull_request']);
 
     // verification will fail unless we strip slashes on primary_keys and form_data
     $filtered_post['primary_keys'] = stripslashes($filtered_post['primary_keys']);
@@ -2636,7 +2653,7 @@ class WPSDB extends WPSDB_Base
         $data['action'] = 'wpsdb_process_push_migration_cancellation';
         $data['temp_prefix'] = $this->temp_prefix;
         $ajax_url = trailingslashit($data['url']) . 'wp-admin/admin-ajax.php';
-        $data['sig'] = $this->create_signature($data, $data['key']);
+        $data = $this->sign_remote_post_data($data, $data['key']);
 
         $response = $this->remote_post($ajax_url, $data, __FUNCTION__);
         $this->display_errors();
@@ -2661,7 +2678,7 @@ class WPSDB extends WPSDB_Base
 
   function respond_to_process_push_migration_cancellation()
   {
-    $filtered_post = $this->filter_post_elements($_POST, array('action', 'intent', 'url', 'key', 'form_data', 'dump_filename', 'temp_prefix', 'stage'));
+    $filtered_post = $this->filter_post_elements($_POST, $this->remote_post_elements['wpsdb_process_push_migration_cancellation']);
     if (!$this->verify_signature($filtered_post, $this->settings['key'])) {
       echo $this->invalid_content_verification_error;
       exit;

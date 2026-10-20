@@ -1,1 +1,2 @@
 tests/vendor/
+/tests/.phpunit.result.cache
