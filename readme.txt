@@ -1,7 +1,7 @@
 === WP Sync DB ===
 Tags: database, migration, sync, export, backup
 Tested up to: 7.1
-Stable tag: 2.0.11
+Stable tag: 2.0.12
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -49,6 +49,9 @@ You will not receive automatic updates with this method.
 3. Activate the plugin.
 
 == Changelog ==
+
+= 2.0.12 =
+* Filter out unwanted fields of the signature
 
 = 2.0.11 =
 * Fix double slash removal
