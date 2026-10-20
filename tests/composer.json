@@ -1,0 +1,20 @@
+{
+	"name": "jsongerber/wp-sync-db-tests",
+	"description": "Unit test dependencies for WP Sync DB. Kept separate so lib/ stays untouched.",
+	"license": "GPL-2.0",
+	"require-dev": {
+		"phpunit/phpunit": "^9.6",
+		"brain/monkey": "^2.6"
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"WPSDB\\Tests\\": "",
+			"WPSDB\\": "../src/"
+		}
+	},
+	"config": {
+		"platform": {
+			"php": "7.3.0"
+		}
+	}
+}
